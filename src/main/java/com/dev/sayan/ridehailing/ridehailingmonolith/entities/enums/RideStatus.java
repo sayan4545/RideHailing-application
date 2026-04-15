@@ -1,8 +1,6 @@
 package com.dev.sayan.ridehailing.ridehailingmonolith.entities.enums;
 
-public enum RideRequestStatus {
-
-    ACCEPTED,
-    REJECTED,
-    ON_HOLD
+public enum RideStatus {
+    CANCELLED,
+    COMPLETED,
 }
