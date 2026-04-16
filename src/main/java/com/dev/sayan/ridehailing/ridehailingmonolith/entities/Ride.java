@@ -1,5 +1,6 @@
 package com.dev.sayan.ridehailing.ridehailingmonolith.entities;
 
+import com.dev.sayan.ridehailing.ridehailingmonolith.entities.enums.PaymentMethod;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.enums.RideStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,6 +36,14 @@ public class Ride {
 
     @Enumerated(EnumType.STRING)
     private RideStatus rideStatus;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
+    private Double fare;
+
+    private LocalDateTime startRideTime;
+    private LocalDateTime endRideTime;
 
 
 }
