@@ -5,9 +5,10 @@ import org.locationtech.jts.geom.Point;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DistanceServiceImpl implements DistanceService {
+public class DistanceServiceORSMImpl implements DistanceService {
     @Override
     public Double calculateDistance(Point src, Point dest) {
+        // call the third party api
         return 0.0;
     }
 }
