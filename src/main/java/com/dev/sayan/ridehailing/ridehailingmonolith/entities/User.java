@@ -2,11 +2,19 @@ package com.dev.sayan.ridehailing.ridehailingmonolith.entities;
 
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.enums.Roles;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "app_user")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
