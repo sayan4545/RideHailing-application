@@ -5,6 +5,8 @@ import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.RideDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.RideRequestDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.RiderDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.RideRequest;
+import com.dev.sayan.ridehailing.ridehailingmonolith.entities.Rider;
+import com.dev.sayan.ridehailing.ridehailingmonolith.entities.User;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.enums.RideRequestStatus;
 import com.dev.sayan.ridehailing.ridehailingmonolith.repositories.RideRequestRepository;
 import com.dev.sayan.ridehailing.ridehailingmonolith.services.RiderService;
@@ -65,5 +67,14 @@ public class RiderServiceImpl implements RiderService {
     @Override
     public List<RideDto> getAllRides() {
         return List.of();
+    }
+
+    @Override
+    public Rider createNewRider(User user) {
+        Rider newRider = Rider.builder()
+                .user(user)
+                .rating(0.0)
+                .build();
+        return newRider;
     }
 }
