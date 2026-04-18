@@ -4,6 +4,8 @@ import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.DriverDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.RideDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.RideRequestDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.RiderDto;
+import com.dev.sayan.ridehailing.ridehailingmonolith.entities.Rider;
+import com.dev.sayan.ridehailing.ridehailingmonolith.entities.User;
 
 import java.util.List;
 
@@ -18,6 +20,8 @@ public interface RiderService {
     RiderDto getMyProfile();
 
     List<RideDto> getAllRides();
+
+    Rider createNewRider(User user);
 
 
 
