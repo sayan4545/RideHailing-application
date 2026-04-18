@@ -9,6 +9,7 @@ import com.dev.sayan.ridehailing.ridehailingmonolith.entities.Rider;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.User;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.enums.RideRequestStatus;
 import com.dev.sayan.ridehailing.ridehailingmonolith.repositories.RideRequestRepository;
+import com.dev.sayan.ridehailing.ridehailingmonolith.repositories.RiderRepository;
 import com.dev.sayan.ridehailing.ridehailingmonolith.services.RiderService;
 import com.dev.sayan.ridehailing.ridehailingmonolith.strategies.DriverMatchingStrategy;
 import com.dev.sayan.ridehailing.ridehailingmonolith.strategies.FareCalculationStrategy;
@@ -25,12 +26,14 @@ public class RiderServiceImpl implements RiderService {
     private final FareCalculationStrategy fareCalculationStrategy;
     private final DriverMatchingStrategy driverMatchingStrategy;
     private final RideRequestRepository rideRequestRepository;
+    private final RiderRepository riderRepository;
 
-    public RiderServiceImpl(ModelMapper modelMapper, FareCalculationStrategy fareCalculationStrategy, DriverMatchingStrategy driverMatchingStrategy, RideRequestRepository rideRequestRepository) {
+    public RiderServiceImpl(ModelMapper modelMapper, FareCalculationStrategy fareCalculationStrategy, DriverMatchingStrategy driverMatchingStrategy, RideRequestRepository rideRequestRepository, RiderRepository riderRepository) {
         this.modelMapper = modelMapper;
         this.fareCalculationStrategy = fareCalculationStrategy;
         this.driverMatchingStrategy = driverMatchingStrategy;
         this.rideRequestRepository = rideRequestRepository;
+        this.riderRepository = riderRepository;
     }
 
     @Override
@@ -75,6 +78,6 @@ public class RiderServiceImpl implements RiderService {
                 .user(user)
                 .rating(0.0)
                 .build();
-        return newRider;
+        return riderRepository.save(newRider);
     }
 }
