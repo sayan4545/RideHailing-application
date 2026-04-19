@@ -3,6 +3,7 @@ package com.dev.sayan.ridehailing.ridehailingmonolith.dtos;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.Rider;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.enums.PaymentMethod;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.enums.RideRequestStatus;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RideRequestDto {
 
     private Long id;
@@ -22,6 +24,7 @@ public class RideRequestDto {
     private PointDto dropLocation;
     private LocalDateTime currentTime;
     private RiderDto rider;
+    private Double fare;
     private PaymentMethod paymentMethod;
     private RideRequestStatus rideRequestStatus;
 }
