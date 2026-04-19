@@ -2,10 +2,15 @@ package com.dev.sayan.ridehailing.ridehailingmonolith.services.impl;
 
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.ORSMResponseDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.services.DistanceService;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.locationtech.jts.geom.Point;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+
+import java.util.List;
 
 @Service
 public class DistanceServiceORSMImpl implements DistanceService {
@@ -79,11 +84,11 @@ public class DistanceServiceORSMImpl implements DistanceService {
     @Override
     public Double calculateDistance(Point src, Point dest) {
         try {
-            String uri = src.getX() + "," + src.getY() + ";" + dest.getX() + "," + dest.getY() + "?overview=false&geometries=geojson";
+            String uri = src.getX()+","+src.getY()+";"+dest.getX()+","+dest.getY()+"?overview=false";
             System.out.println("Calling OSRM: " + ORSM_API + uri);
 
             // Use toEntity() to capture the entire HTTP response safely
-            var responseEntity = RestClient.builder()
+            ORSMResponseDto responseDto = RestClient.builder()
                     .baseUrl(ORSM_API)
                     .defaultHeader("User-Agent", "RideHailingMonolith/1.0 (dev@sayan.com)")
                     .build()
@@ -91,22 +96,25 @@ public class DistanceServiceORSMImpl implements DistanceService {
                     .uri(uri)
                     .retrieve()
                     // Don't throw exceptions on 4xx/5xx yet, just wrap them in the entity
-                    .onStatus(status -> status.isError(), (req, res) -> {})
-                    .toEntity(String.class);
+                    .body(ORSMResponseDto.class);
 
-            System.out.println("====== OSRM HTTP RESPONSE ======");
-            System.out.println("STATUS CODE: " + responseEntity.getStatusCode());
-            System.out.println("HEADERS: " + responseEntity.getHeaders());
-            System.out.println("BODY: " + responseEntity.getBody());
-            System.out.println("================================");
-
-            throw new RuntimeException("Check the IDE console for the HTTP RESPONSE.");
-
+            if (responseDto == null) {
+                throw new RuntimeException("Null response from OSRM");
+            }
+            if (!"Ok".equals(responseDto.getCode())) {
+                throw new RuntimeException("OSRM error: " + responseDto.getCode()
+                        + " - " + responseDto.getMessage());
+            }
+            if (responseDto.getRoutes() == null || responseDto.getRoutes().isEmpty()) {
+                throw new RuntimeException("No routes in OSRM response");
+            }
+            return responseDto.getRoutes().get(0).getDistance() / 1000.0;
         } catch (Exception e) {
             throw new RuntimeException("Distance calculation failed: " + e.getMessage(), e);
         }
     }
 
 }
+
 
 
