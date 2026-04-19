@@ -16,6 +16,7 @@ import com.dev.sayan.ridehailing.ridehailingmonolith.strategies.FareCalculationS
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,6 +38,7 @@ public class RiderServiceImpl implements RiderService {
     }
 
     @Override
+    @Transactional
     public RideRequestDto requestRide(RideRequestDto rideRequestDto) {
         RideRequest rideRequest = modelMapper
                 .map(rideRequestDto, RideRequest.class);
