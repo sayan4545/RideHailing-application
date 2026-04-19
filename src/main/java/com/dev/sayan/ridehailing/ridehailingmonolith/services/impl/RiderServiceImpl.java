@@ -8,11 +8,14 @@ import com.dev.sayan.ridehailing.ridehailingmonolith.entities.RideRequest;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.Rider;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.User;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.enums.RideRequestStatus;
+import com.dev.sayan.ridehailing.ridehailingmonolith.exceptions.ResourceNotFoundException;
 import com.dev.sayan.ridehailing.ridehailingmonolith.repositories.RideRequestRepository;
 import com.dev.sayan.ridehailing.ridehailingmonolith.repositories.RiderRepository;
 import com.dev.sayan.ridehailing.ridehailingmonolith.services.RiderService;
 import com.dev.sayan.ridehailing.ridehailingmonolith.strategies.DriverMatchingStrategy;
 import com.dev.sayan.ridehailing.ridehailingmonolith.strategies.FareCalculationStrategy;
+import com.dev.sayan.ridehailing.ridehailingmonolith.strategies.StrategyManager;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -22,34 +25,30 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class RiderServiceImpl implements RiderService {
     private final ModelMapper modelMapper;
-    private final FareCalculationStrategy fareCalculationStrategy;
-    private final DriverMatchingStrategy driverMatchingStrategy;
+    private final StrategyManager strategyManager;
     private final RideRequestRepository rideRequestRepository;
     private final RiderRepository riderRepository;
 
-    public RiderServiceImpl(ModelMapper modelMapper, FareCalculationStrategy fareCalculationStrategy, DriverMatchingStrategy driverMatchingStrategy, RideRequestRepository rideRequestRepository, RiderRepository riderRepository) {
-        this.modelMapper = modelMapper;
-        this.fareCalculationStrategy = fareCalculationStrategy;
-        this.driverMatchingStrategy = driverMatchingStrategy;
-        this.rideRequestRepository = rideRequestRepository;
-        this.riderRepository = riderRepository;
-    }
 
     @Override
     @Transactional
     public RideRequestDto requestRide(RideRequestDto rideRequestDto) {
+        Rider rider = getCurrentRider();
         RideRequest rideRequest = modelMapper
                 .map(rideRequestDto, RideRequest.class);
         //log.info("RideRequestDto gets converted to Riderequest {}",rideRequest.toString());
         rideRequest.setRideRequestStatus(RideRequestStatus.PENDING);
-        Double fare = fareCalculationStrategy.calculateFare(rideRequest);
+        rideRequest.setRider(rider);
+        Double fare = strategyManager.calculateFare().calculateFare(rideRequest);
         rideRequest.setFare(fare);
         // save this ride request
         RideRequest persistedRideRequest = rideRequestRepository.save(rideRequest);
 
-        driverMatchingStrategy.findMatchingDrivers(rideRequest);
+        //driverMatchingStrategy.findMatchingDrivers(rideRequest);
+        strategyManager.drivermatchingStrategy(rider.getRating()).findMatchingDrivers(rideRequest);
 
         return modelMapper.map(persistedRideRequest, RideRequestDto.class);
     }
@@ -81,5 +80,11 @@ public class RiderServiceImpl implements RiderService {
                 .rating(0.0)
                 .build();
         return riderRepository.save(newRider);
+    }
+
+    @Override
+    public Rider getCurrentRider() {
+        // TODO : use spring security to get context of the current rider.
+        return riderRepository.findById(1L).orElseThrow(()-> new ResourceNotFoundException("No rider with the id"));
     }
 }
