@@ -1,5 +1,6 @@
 package com.dev.sayan.ridehailing.ridehailingmonolith.controllers;
 
+
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.SignUpDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.UserDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.services.AuthService;
@@ -21,6 +22,6 @@ public class AuthController {
     }
     @PostMapping("/signUp")
     public ResponseEntity<UserDto> signUp(@RequestBody SignUpDto signUpDto){
-        return new ResponseEntity<>(authService.signUp(signUpDto), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(authService.signUp(signUpDto), HttpStatus.CREATED);
     }
 }
