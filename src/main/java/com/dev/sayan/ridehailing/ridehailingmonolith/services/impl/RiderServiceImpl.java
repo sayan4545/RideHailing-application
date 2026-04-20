@@ -4,6 +4,7 @@ import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.DriverDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.RideDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.RideRequestDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.RiderDto;
+import com.dev.sayan.ridehailing.ridehailingmonolith.entities.Driver;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.RideRequest;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.Rider;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.User;
@@ -48,7 +49,11 @@ public class RiderServiceImpl implements RiderService {
         RideRequest persistedRideRequest = rideRequestRepository.save(rideRequest);
 
         //driverMatchingStrategy.findMatchingDrivers(rideRequest);
-        strategyManager.drivermatchingStrategy(rider.getRating()).findMatchingDrivers(rideRequest);
+        List<DriverDto> drivers = strategyManager
+                .drivermatchingStrategy(rider.getRating())
+                .findMatchingDrivers(rideRequest);
+
+        //TODO : SEND NOTFICATIONS TO ALL THE MATCHED DRIVERS
 
         return modelMapper.map(persistedRideRequest, RideRequestDto.class);
     }
