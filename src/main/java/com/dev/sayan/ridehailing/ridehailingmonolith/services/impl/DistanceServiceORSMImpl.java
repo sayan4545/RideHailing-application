@@ -86,29 +86,31 @@ public class DistanceServiceORSMImpl implements DistanceService {
         try {
             String uri = src.getX()+","+src.getY()+";"+dest.getX()+","+dest.getY()+"?overview=false";
             System.out.println("Calling OSRM: " + ORSM_API + uri);
-
-            // Use toEntity() to capture the entire HTTP response safely
-            ORSMResponseDto responseDto = RestClient.builder()
+            return RestClient.builder()
                     .baseUrl(ORSM_API)
                     .defaultHeader("User-Agent", "RideHailingMonolith/1.0 (dev@sayan.com)")
                     .build()
                     .get()
                     .uri(uri)
                     .retrieve()
-                    // Don't throw exceptions on 4xx/5xx yet, just wrap them in the entity
-                    .body(ORSMResponseDto.class);
+                    .body(ORSMResponseDto.class)
+                    .getRoutes()
+                    .stream()
+                    .findFirst()
+                    .map(route-> route.getDistance() /1000.0)
+                    .orElseThrow(()-> new RuntimeException("No routes found"));
 
-            if (responseDto == null) {
-                throw new RuntimeException("Null response from OSRM");
-            }
-            if (!"Ok".equals(responseDto.getCode())) {
-                throw new RuntimeException("OSRM error: " + responseDto.getCode()
-                        + " - " + responseDto.getMessage());
-            }
-            if (responseDto.getRoutes() == null || responseDto.getRoutes().isEmpty()) {
-                throw new RuntimeException("No routes in OSRM response");
-            }
-            return responseDto.getRoutes().get(0).getDistance() / 1000.0;
+//            if (responseDto == null) {
+//                throw new RuntimeException("Null response from OSRM");
+//            }
+//            if (!"Ok".equals(responseDto.getCode())) {
+//                throw new RuntimeException("OSRM error: " + responseDto.getCode()
+//                        + " - " + responseDto.getMessage());
+//            }
+//            if (responseDto.getRoutes() == null || responseDto.getRoutes().isEmpty()) {
+//                throw new RuntimeException("No routes in OSRM response");
+//            }
+//            return responseDto.getRoutes().get(0).getDistance() / 1000.0;
         } catch (Exception e) {
             throw new RuntimeException("Distance calculation failed: " + e.getMessage(), e);
         }
