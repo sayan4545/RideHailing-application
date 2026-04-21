@@ -1,12 +1,14 @@
 package com.dev.sayan.ridehailing.ridehailingmonolith.dtos;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
+
 public class RouteDto {
     private double distance;
     private double duration;
