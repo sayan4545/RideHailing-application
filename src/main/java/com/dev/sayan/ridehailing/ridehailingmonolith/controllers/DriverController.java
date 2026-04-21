@@ -1,13 +1,11 @@
 package com.dev.sayan.ridehailing.ridehailingmonolith.controllers;
 
 import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.RideDto;
+import com.dev.sayan.ridehailing.ridehailingmonolith.dtos.RideStartDto;
 import com.dev.sayan.ridehailing.ridehailingmonolith.services.DriverService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/drivers")
@@ -21,5 +19,10 @@ public class DriverController {
     @PostMapping("/acceptRide/{rideRequestId}")
     public ResponseEntity<RideDto> acceptRide(@PathVariable Long rideRequestId){
         return new ResponseEntity<>(driverService.acceptRide(rideRequestId), HttpStatus.ACCEPTED);
+    }
+    @PostMapping("/startRide/{rideRequestId}")
+    public ResponseEntity<RideDto> startRide(@PathVariable Long rideRequestId,
+                                             @RequestBody RideStartDto rideStartDto){
+        return new ResponseEntity<>(driverService.startRide(rideRequestId,rideStartDto.getOtp()),HttpStatus.CREATED);
     }
 }
