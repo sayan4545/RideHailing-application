@@ -108,7 +108,8 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public DriverDto getMyProfile() {
-        return null;
+        Driver cuurentDriver = getCurrentDriver();
+        return modelMapper.map(cuurentDriver,DriverDto.class);
     }
 
     @Override
