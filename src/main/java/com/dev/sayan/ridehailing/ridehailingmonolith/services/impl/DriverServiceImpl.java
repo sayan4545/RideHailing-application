@@ -55,7 +55,18 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public RideDto cancelRide(Long rideId) {
-        return null;
+        // LOGIC : A DRIVER CAN ONLY CANCEL A RIDE THAT IS NOT ONGOING.
+        // 1. get the ride
+        Ride rideUnderObservation = rideService.getRideById(rideId);
+        // Check if the Driver owns the ride or not
+        Driver driver = getCurrentDriver();
+        if(!driver.equals(rideUnderObservation.getDriver())) throw new RuntimeException("The driver donot hold the ride");
+        if(!rideUnderObservation.getRideStatus().equals(RideStatus.ACCEPTED)) throw new RuntimeException("Cannot be cancelled, invalid status :"+ rideUnderObservation.getRideStatus());
+        rideService.updateRideStatus(rideUnderObservation,RideStatus.CANCELLED);
+        driver.setIsAvailable(true);
+        driverRepository.save(driver);
+        return modelMapper
+                .map(rideUnderObservation, RideDto.class);
     }
 
     @Override
@@ -76,7 +87,7 @@ public class DriverServiceImpl implements DriverService {
         }
 
         Ride savedRide = rideService.updateRideStatus(ride,RideStatus.ONGOING);
-        driver.setIsAvailable(false);
+        //driver.setIsAvailable(false);
         return modelMapper.map(savedRide,RideDto.class);
     }
 

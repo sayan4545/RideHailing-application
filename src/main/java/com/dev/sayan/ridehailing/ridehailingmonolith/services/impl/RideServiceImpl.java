@@ -56,6 +56,7 @@ public class RideServiceImpl implements RideService {
         RideRequest toUpdateOrSave = modelMapper
                 .map(rideRequestDto,RideRequest.class);
         rideRequestService.update(toUpdateOrSave);
+        driver.setIsAvailable(false);
         return rideRepository.save(currentRide);
 
 
