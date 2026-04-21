@@ -7,7 +7,7 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.PrecisionModel;
 
-@UtilityClass
+
 public class GeometryUtils {
 
     public static Point createPoint(PointDto pointDto){
