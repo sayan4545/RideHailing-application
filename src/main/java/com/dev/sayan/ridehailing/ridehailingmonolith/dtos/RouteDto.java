@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RouteDto {
-    private Double distance;
-    private Double duration;
+    private double distance;
+    private double duration;
+
 }
