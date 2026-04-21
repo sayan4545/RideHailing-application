@@ -8,6 +8,7 @@ import com.dev.sayan.ridehailing.ridehailingmonolith.entities.Driver;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.Ride;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.RideRequest;
 import com.dev.sayan.ridehailing.ridehailingmonolith.entities.enums.RideRequestStatus;
+import com.dev.sayan.ridehailing.ridehailingmonolith.entities.enums.RideStatus;
 import com.dev.sayan.ridehailing.ridehailingmonolith.repositories.DriverRepository;
 import com.dev.sayan.ridehailing.ridehailingmonolith.services.DriverService;
 import com.dev.sayan.ridehailing.ridehailingmonolith.services.RideRequestService;
@@ -21,10 +22,10 @@ import java.util.List;
 @Service
 public class DriverServiceImpl implements DriverService {
     private final DriverRepository driverRepository;
-
     private final RideRequestService rideRequestService;
     private final ModelMapper modelMapper;
     private final RideService rideService;
+
 
     public DriverServiceImpl(DriverRepository driverRepository, RideRequestService rideRequestService, ModelMapper modelMapper, RideService rideService) {
         this.driverRepository = driverRepository;
@@ -58,8 +59,25 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public RideDto startRide(Long rideId) {
-        return null;
+    public RideDto startRide(Long rideId,String OTP) {
+        Ride ride = rideService.getRideById(rideId);
+        Driver driver = getCurrentDriver();
+
+        if(!driver.equals(ride.getDriver())){
+            throw new RuntimeException("Driver didntot match");
+        }
+
+        if(!ride.getRideStatus().equals(RideStatus.ACCEPTED)){
+            throw new RuntimeException("NOT ACCEPTED");
+
+        }
+        if(!OTP.equals(ride.getOtp())){
+            throw new RuntimeException("Otp didnt match");
+        }
+
+        Ride savedRide = rideService.updateRideStatus(ride,RideStatus.ONGOING);
+        driver.setIsAvailable(false);
+        return modelMapper.map(savedRide,RideDto.class);
     }
 
     @Override
